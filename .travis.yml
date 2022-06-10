@@ -6,9 +6,9 @@ branches:
     - main
 before_deploy:
   - rm -rf node_modules
-  - zip -r next-build-test * #zip 파일 이름 명시
+  - zip -r next-deploy-test * #zip 파일 이름 명시
   - mkdir -p deploy #deploy폴더 생성
-  - mv next-build-test.zip deploy/next-build-test.zip #만든 zip 파일을 deploy 폴더로 이동
+  - mv next-deploy-test.zip deploy/next-deploy-test.zip #만든 zip 파일을 deploy 폴더로 이동
 deploy:
   - provider: s3
     access_key_id: $AWS_ACCESS_KEY #추후에 travis에서 설정
@@ -25,7 +25,7 @@ deploy:
     access_key_id: $AWS_ACCESS_KEY
     secret_access_key: $AWS_SECRET_KEY
     bucket: next-deploy-test-jaynull #s3 버킷 이름
-    key: next-build-test.zip
+    key: next-deploy-test.zip
     bundle_type: zip
     application: code-deploy-application #CodeDeploy에서 생성한 애플리케이션 이름
     deployment_group: code-deploy-group #이전 단계에서 설정한 CodeDeploy 배포 그룹명
