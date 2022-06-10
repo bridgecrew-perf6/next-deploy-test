@@ -1,12 +1,40 @@
-language: node_js # 언어는 node_js
+language: node_js
 node_js:
-  - "10.14" # node_js에 버전 10.14
-before_install: # 패키지를 다운로드 받기 전
-  - npm install -g yarn  # yarn을 글로벌로 설치
+  - 14 #노드 버전
 branches:
   only:
     - main
-notifications: # 성공 실패 여부 알림 
+before_deploy:
+  - rm -rf node_modules
+  - zip -r next-build-test * #zip 파일 이름 명시
+  - mkdir -p deploy #deploy폴더 생성
+  - mv next-build-test.zip deploy/next-build-test.zip #만든 zip 파일을 deploy 폴더로 이동
+deploy:
+  - provider: s3
+    access_key_id: $AWS_ACCESS_KEY #추후에 travis에서 설정
+    secret_access_key: $AWS_SECRET_KEY #추후에 travis에서 설정
+    bucket: next-deploy-test-jaynull #s3 버킷 이름
+    region: ap-northeast-2
+    skip_cleanup: true
+    local_dir: deploy
+    wait-until-deployed: true
+    on:
+      repo: sty1103/next-deploy-test #본인의 repository
+      branch: main
+  - provider: codedeploy
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: next-deploy-test-jaynull #s3 버킷 이름
+    key: next-build-test.zip
+    bundle_type: zip
+    application: next-build-test-application
+    deployment_group: code-deploy-group #이전 단계에서 설정한 CodeDeploy 배포 그룹명
+    region: ap-northeast-2
+    wait-until-deployed: true
+    on:
+      repo: sty1103/next-deploy-test #본인의 repository
+      branch: main
+notifications:
   email:
     recipients:
-      - sty110357@gmail.com
+      - sty110357@gmail.com #본인의 이메일
