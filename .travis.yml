@@ -27,7 +27,7 @@ deploy:
     bucket: next-deploy-test-jaynull #s3 버킷 이름
     key: next-build-test.zip
     bundle_type: zip
-    application: next-build-test-application
+    application: code-deploy-application #CodeDeploy에서 생성한 애플리케이션 이름
     deployment_group: code-deploy-group #이전 단계에서 설정한 CodeDeploy 배포 그룹명
     region: ap-northeast-2
     wait-until-deployed: true
